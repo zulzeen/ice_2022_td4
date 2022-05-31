@@ -1,0 +1,16 @@
+# MAIN DEPENDENCIES
+fastapi
+uvicorn[standard]
+asyncpg
+tortoise-orm
+
+# TESTING ENVIRONMENT
+pytest
+requests  # used by starlette TestClient
+psycopg2
+
+# QUALITY
+pytest-cov
+flake8
+black
+isort

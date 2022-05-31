@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  web-db:
+    image: postgres:14
+    volumes:
+      - ./project/db/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DEV_DB_NAME}
+
+  web:
+    build: ./project
+    command: ["uvicorn", "app.main:app", "--reload", "--workers", "1", "--host", "0.0.0.0", "--port", "8000"]
+    volumes:
+      - ./project:/usr/src/app
+    ports:
+      - 8004:8000
+    environment:
+      - DATABASE_URL=${DB_ENGINE}://${DB_USER}:${DB_PASSWORD}@web-db:5432/${DEV_DB_NAME}
+      - DATABASE_TEST_URL=${DB_ENGINE}://${DB_USER}:${DB_PASSWORD}@web-db:5432/${TEST_DB_NAME}
+    depends_on:
+      - web-db
